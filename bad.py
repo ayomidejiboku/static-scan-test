@@ -1,4 +1,16 @@
-import subprocess
+name: Semgrep Static Scan
 
-# BAD: using shell=True is dangerous
-subprocess.run("ls -la", shell=True)
+on:
+  push:
+  pull_request:
+
+jobs:
+  semgrep:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: returntocorp/semgrep-action@v1
+      with:
+        config: "p/python"
+
