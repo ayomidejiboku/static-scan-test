@@ -1,16 +1,20 @@
-name: Semgrep Static Scan
+import subprocess
+import pickle
+import yaml
+import hashlib
+import os
 
-on:
-  push:
-  pull_request:
+# Command injection
+subprocess.run("ls -la; cat /etc/passwd", shell=True)
 
-jobs:
-  semgrep:
-    runs-on: ubuntu-latest
+# Insecure YAML load
+yaml.load("!!python/object/apply:os.system ['echo hacked']", Loader=yaml.Loader)
 
-    steps:
-    - uses: actions/checkout@v4
-    - uses: returntocorp/semgrep-action@v1
-      with:
-        config: "p/python"
+# Insecure pickle
+pickle.loads(b"cos\nsystem\n(S'echo hacked'\ntR.")
 
+# Weak hashing
+hashlib.md5(b"password").hexdigest()
+
+# Arbitrary file write
+open("/tmp/pwned.txt", "w").write("owned")
