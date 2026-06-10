@@ -10,7 +10,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
     - uses: returntocorp/semgrep-action@v1
       with:
-        version: latest
-        config: "p/security-audit"
+        config: "p/ci"
