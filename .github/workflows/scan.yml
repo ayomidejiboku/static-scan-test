@@ -20,4 +20,6 @@ jobs:
             --config p/secrets \
             --verbose \
             --max-target-bytes 0 \
-            --no-git-ignore
+            --no-git-ignore 
+            --severity high
+
