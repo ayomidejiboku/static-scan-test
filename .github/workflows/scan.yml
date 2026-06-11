@@ -12,10 +12,8 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      with:
-        config: "p/ci"
-
-
+      - name: Run Semgrep
+        run: semgrep scan --config p/ci
 
 
 
