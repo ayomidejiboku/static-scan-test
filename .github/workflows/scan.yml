@@ -7,11 +7,15 @@ on:
 permissions:
   contents: read
   security-events: write
+  actions: read
 
 jobs:
   semgrep:
     runs-on: ubuntu-latest
     container: semgrep/semgrep:latest
+
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
       - uses: actions/checkout@v6
@@ -25,6 +29,7 @@ jobs:
             --verbose \
             --max-target-bytes 0 \
             --no-git-ignore \
+            --metrics off \
             --sarif --output semgrep.sarif
 
       - name: Upload SARIF to GitHub Security
