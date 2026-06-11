@@ -20,6 +20,11 @@ jobs:
             --config p/secrets \
             --verbose \
             --max-target-bytes 0 \
-            --no-git-ignore 
-            --severity high
+            --no-git-ignore \
+            --sarif --output semgrep.sarif
+
+      - name: Upload SARIF to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: semgrep.sarif
 
