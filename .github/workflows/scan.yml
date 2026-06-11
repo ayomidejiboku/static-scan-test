@@ -13,6 +13,11 @@ jobs:
       - uses: actions/checkout@v6
 
       - name: Run Semgrep
-        run: semgrep scan --config p/ci --verbose --max-target-bytes 0 --no-semgrepignore
-
-
+        run: |
+          semgrep scan \
+            --config p/ci \
+            --config p/security-audit \
+            --config p/secrets \
+            --verbose \
+            --max-target-bytes 0 \
+            --no-git-ignore
