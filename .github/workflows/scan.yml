@@ -24,8 +24,7 @@ jobs:
 
       - name: Convert ZAP JSON to SARIF
         run: |
-          pip install zap-scan-to-sarif
-          zap-scan-to-sarif zap.json zap.sarif
+          python /zap/zap-json-sarif.py zap.json -o zap.sarif
 
       - name: Upload SARIF as artifact
         uses: actions/upload-artifact@v5
