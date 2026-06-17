@@ -6,8 +6,8 @@ on:
 
 permissions:
   contents: read
+  security-events: write
   actions: write
-  issues: write
 
 jobs:
   zap_scan:
@@ -20,12 +20,17 @@ jobs:
         uses: zaproxy/action-baseline@v0.10.0
         with:
           target: "https://example.com"
-          cmd_options: "-a"
-          artifact_name: zap-report
+          cmd_options: "-a -J zap.json"   # <-- produce JSON
 
-      - name: Upload ZAP Report
+      - name: Convert ZAP JSON to SARIF
+        run: |
+          pip install zap-scan-to-sarif
+          zap-scan-to-sarif zap.json zap.sarif
+
+      - name: Upload SARIF as artifact
         uses: actions/upload-artifact@v5
         with:
-          name: zap-report
-          path: report.html
+          name: zap-sarif
+          path: zap.sarif
+
 
