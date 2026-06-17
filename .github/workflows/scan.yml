@@ -1,8 +1,12 @@
-name: OWASP ZAP Dynamic Scan
+name: OWASP ZAP Scan
 
 on:
   push:
   pull_request:
+
+permissions:
+  contents: read
+  issues: write
 
 jobs:
   zap_scan:
@@ -23,5 +27,6 @@ jobs:
         with:
           name: zap-report
           path: report.html
+
 
 
