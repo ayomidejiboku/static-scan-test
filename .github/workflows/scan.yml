@@ -27,5 +27,3 @@ jobs:
         with:
           name: zap-report
           path: report.html
-
-
