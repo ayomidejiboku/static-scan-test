@@ -19,7 +19,7 @@ jobs:
         uses: zaproxy/action-baseline@v0.10.0
         with:
           target: "https://example.com"
-          cmd_options: "-a"
+          cmd_options: "-a --no-artefact"
           allow_issue_writing: false
 
 
