@@ -14,22 +14,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout code
+        uses: actions/checkout@v6
 
-      - name: Run OWASP ZAP Baseline Scan
-        uses: zaproxy/action-baseline@v0.10.0
-        with:
-          target: "https://example.com"
-          cmd_options: "-a -J zap.json"   # <-- produce JSON
+      - name: Run ZAP Baseline Scan (Full Docker)
+        run: |
+          docker run \
+            -v $(pwd):/zap/wrk \
+            owasp/zap2docker-stable \
+            zap-baseline.py \
+              -t https://example.com \
+              -J zap.json \
+              -r zap.html
 
       - name: Convert ZAP JSON to SARIF
         run: |
-          python /zap/zap-json-sarif.py zap.json -o zap.sarif
+          docker run \
+            -v $(pwd):/zap/wrk \
+            owasp/zap2docker-stable \
+            python /zap/zap-json-sarif.py zap.json -o zap.sarif
 
       - name: Upload SARIF as artifact
         uses: actions/upload-artifact@v5
         with:
           name: zap-sarif
           path: zap.sarif
+
+      - name: Upload SARIF to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: zap.sarif
 
 
