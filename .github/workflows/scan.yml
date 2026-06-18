@@ -18,40 +18,26 @@ jobs:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
+      - uses: actions/checkout@v6
 
       - name: Run Semgrep
         run: |
           semgrep scan \
-            --config auto \
             --config p/ci \
             --config p/security-audit \
             --config p/secrets \
             --config p/owasp-top-ten \
             --config p/cwe-top-25 \
-            --config p/r2c-security-audit \
-            --config p/github-actions \
-            --config p/dockerfile \
-            --config p/terraform \
-            --config p/kubernetes \
-            --secrets \
             --verbose \
             --max-target-bytes 0 \
             --no-git-ignore \
             --metrics off \
             --timeout 60 \
             --timeout-threshold 3 \
-            --sarif \
-            --output semgrep.sarif
+            --sarif --output semgrep.sarif
 
       - name: Upload SARIF to GitHub Security
-        if: always()
         uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: semgrep.sarif
-          category: semgrep
-
 
