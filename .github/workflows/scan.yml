@@ -22,14 +22,19 @@ jobs:
           unzip -o nuclei*.zip
           sudo mv nuclei /usr/local/bin/
 
-      - name: Update Nuclei templates
-        run: nuclei -update-templates
+      - name: Run Nuclei scan (FAST SARIF)
+        run: |
+          nuclei \
+            -u https://example.com \
+            -sarif -o nuclei.sarif \
+            -tags cve,exposure,fast \
+            -exclude-tags fuzz,dns,ssl \
+            -c 30 \
+            -timeout 5 \
+            -rate-limit 150
 
-      - name: Run Nuclei scan
-        run: nuclei -u https://example.com -o nuclei-results.txt
-
-      - name: Upload results
-        uses: actions/upload-artifact@v5
+      - name: Upload SARIF to GitHub
+        uses: github/codeql-action/upload-sarif@v3
         with:
-          name: nuclei-results
-          path: nuclei-results.txt
+          sarif_file: nuclei.sarif
+
