@@ -1,45 +1,23 @@
-name: Semgrep Static Scan
+name: ZAP Baseline Scan
 
 on:
   push:
   pull_request:
 
-permissions:
-  contents: read
-
 jobs:
-  semgrep:
+  zap:
     runs-on: ubuntu-latest
-    container: semgrep/semgrep:latest
-
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
-      - name: Run Semgrep
+      - name: Start app
         run: |
-          semgrep scan \
-            --config p/ci \
-            --config p/security-audit \
-            --config p/secrets \
-            --config p/owasp-top-ten \
-            --config p/cwe-top-25 \
-            --config p/github-actions \
-            --config p/dockerfile \
-            --config p/terraform \
-            --config p/kubernetes \
-            --verbose \
-            --max-target-bytes 0 \
-            --no-git-ignore \
-            --metrics off \
-            --timeout 60 \
-            --timeout-threshold 3 \
-            --sarif --output semgrep.sarif
+          docker compose up -d
+          sleep 10
 
-      - name: Upload SARIF as artifact
-        uses: actions/upload-artifact@v5
+      - name: ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.10.0
         with:
-          name: semgrep-sarif
-          path: semgrep.sarif
+          target: "http://localhost:8080"
+
