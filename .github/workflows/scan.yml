@@ -1,24 +1,35 @@
-name: ZAP Baseline Scan
+name: Nuclei Scan
 
 on:
   push:
   pull_request:
 
 jobs:
-  zap:
+  nuclei-scan:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Start app
+      - name: Install Nuclei
         run: |
-          docker compose up -d
-          sleep 10
+          curl -s https://api.github.com/repos/projectdiscovery/nuclei/releases/latest \
+          | grep browser_download_url \
+          | grep linux_amd64.zip \
+          | cut -d '"' -f 4 \
+          | wget -qi -
+          unzip nuclei*.zip
+          sudo mv nuclei /usr/local/bin/
 
-      - name: ZAP Baseline Scan
-        uses: zaproxy/action-baseline@v0.10.0
+      - name: Update Nuclei templates
+        run: nuclei -update-templates
+
+      - name: Run Nuclei scan
+        run: nuclei -u https://example.com -o nuclei-results.txt
+
+      - name: Upload results
+        uses: actions/upload-artifact@v5
         with:
-          target: "http://localhost:8080"
-          
-
+          name: nuclei-results
+          path: nuclei-results.txt
