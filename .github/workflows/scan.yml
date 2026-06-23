@@ -23,7 +23,14 @@ jobs:
           sudo mv nuclei /usr/local/bin/
 
       - name: Install SARIF converter
-        run: pip install nuclei-sarif
+        run: |
+          curl -s https://api.github.com/repos/projectdiscovery/nuclei-sarif-converter/releases/latest \
+          | grep browser_download_url \
+          | grep linux_amd64.zip \
+          | cut -d '"' -f 4 \
+          | wget -qi -
+          unzip -o nuclei-sarif-converter*.zip
+          sudo mv nuclei-sarif-converter /usr/local/bin/
 
       - name: Run FAST Nuclei scan (JSON output)
         run: |
@@ -37,7 +44,7 @@ jobs:
             -rate-limit 150
 
       - name: Convert JSON → SARIF
-        run: nuclei-sarif nuclei.json nuclei.sarif
+        run: nuclei-sarif-converter -i nuclei.json -o nuclei.sarif
 
       - name: Upload SARIF to GitHub
         uses: github/codeql-action/upload-sarif@v3
