@@ -22,19 +22,26 @@ jobs:
           unzip -o nuclei*.zip
           sudo mv nuclei /usr/local/bin/
 
-      - name: Run Nuclei scan (FAST SARIF)
+      - name: Install SARIF converter
+        run: pip install nuclei-sarif
+
+      - name: Run FAST Nuclei scan (JSON output)
         run: |
           nuclei \
             -u https://example.com \
-            -sarif -o nuclei.sarif \
+            -json -o nuclei.json \
             -tags cve,exposure,fast \
             -exclude-tags fuzz,dns,ssl \
             -c 30 \
             -timeout 5 \
             -rate-limit 150
 
+      - name: Convert JSON → SARIF
+        run: nuclei-sarif nuclei.json nuclei.sarif
+
       - name: Upload SARIF to GitHub
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: nuclei.sarif
+
 
