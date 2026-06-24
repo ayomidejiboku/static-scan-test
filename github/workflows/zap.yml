@@ -10,7 +10,7 @@ permissions:
   actions: write
 
 jobs:
-  zapscan:
+  zap_scan:
     runs-on: ubuntu-latest
 
     steps:
@@ -29,3 +29,4 @@ jobs:
         with:
           name: zapscan
           path: report.html
+
