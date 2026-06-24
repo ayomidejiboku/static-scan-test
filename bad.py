@@ -1,20 +1,13 @@
+# bad.py
 import subprocess
-import pickle
 import yaml
-import hashlib
-import os
+import pickle
 
-# Command injection
-subprocess.run("ls -la; cat /etc/passwd", shell=True)
+def run_command(cmd):
+    return subprocess.getoutput(cmd)
 
-# Insecure YAML load
-yaml.load("!!python/object/apply:os.system ['echo hacked']", Loader=yaml.Loader)
+def load_yaml(data):
+    return yaml.load(data, Loader=yaml.Loader)
 
-# Insecure pickle
-pickle.loads(b"cos\nsystem\n(S'echo hacked'\ntR.")
-
-# Weak hashing
-hashlib.md5(b"password").hexdigest()
-
-# Arbitrary file write
-open("/tmp/pwned.txt", "w").write("owned")
+def load_pickle(data):
+    return pickle.loads(data)
